@@ -1,41 +1,29 @@
-# OpenCV Python program to detect cars in video frame 
-# import libraries of python OpenCV  
 import cv2
+count=0
+count_object=set()
+cap = cv2.VideoCapture(0)                                       # capture frames from a video
+car_cascade = cv2.CascadeClassifier('cars121004.xml')           # Trained XML classifiers describes some features of some object we want to detect
   
-
-# capture frames from a video
-cap = cv2.VideoCapture(0)
-# Trained XML classifiers describes some features of some object we want to detect 
-
-#create a folder and place this python file and cars121004.xml in the same folder
-
-#make sure to check the path for the xml file which is called in the python program.
-
-
-car_cascade = cv2.CascadeClassifier('cars121004.xml') 
-  
-# loop runs if capturing has been initialized. 
 while True:
-    # reads frames from a video 
-    ret, frames = cap.read() 
-      
-    # convert to gray scale of each frames 
-    gray = cv2.cvtColor(frames, cv2.COLOR_BGR2GRAY) 
-      
-  
-    # Detects cars of different sizes in the input image 
-    cars = car_cascade.detectMultiScale(gray, 1.1, 1) 
-      
-    # To draw a rectangle in each cars 
-    for (x,y,w,h) in cars: 
+    ret, frames = cap.read()                                    # reads frames from a video
+    gray = cv2.cvtColor(frames, cv2.COLOR_BGR2GRAY)
+    cars = car_cascade.detectMultiScale(gray, 1.1, 1)
+    c=len(cars)
+    print(c)
+
+    for (x,y,w,h) in cars:
+        count=count+1
         cv2.rectangle(frames,(x,y),(x+w,y+h),(0,0,255),2)
-      
-    # Display frames in a window  
-    cv2.imshow('video2', frames)
-      
-    # Wait for Esc key to stop 
-    if cv2.waitKey(33) == 27: 
+        count_object.add(count)
+    else:
+        count_object.add(0)
+        count = 0
+
+    cv2.imshow('video2', frames)                                # Display frames in a window
+    if cv2.waitKey(33) == 27:                                   # Wait for Esc key to stop
         break
-  
-# De-allocate any associated memory usage 
-cv2.destroyAllWindows() 
+cv2.destroyAllWindows()                                         # De-allocate any associated memory usage
+print(count_object)
+print("MAXIMUM CARS DETECTED IS " + str(max(count_object)))
+
+
