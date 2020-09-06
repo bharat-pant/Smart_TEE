@@ -1,8 +1,0 @@
-Add notes here
-Date: 28th August, 2020
-Basic file:
-Skeleton of open CV 
-
-
-
-UPDATED FILE ON 2ND SEPTEMBER,2020
