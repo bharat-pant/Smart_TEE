@@ -4,8 +4,8 @@ import time
 from multiprocessing import Process
 def func1():
     global a1
-    cap = cv2.VideoCapture('C:\Users\dharmbir\Desktop\bdh-pro-2\Car.mp4')
-    car_cascade = cv2.CascadeClassifier('C:\Users\dharmbir\Desktop\bdh-pro-2\cars121004.xml')
+    cap = cv2.VideoCapture('Car.mp4')
+    car_cascade = cv2.CascadeClassifier('cars121004.xml')
     for i in range(3):
         ret, frames = cap.read()
         gray = cv2.cvtColor(frames, cv2.COLOR_BGR2GRAY) 
@@ -20,8 +20,8 @@ def func1():
             break
 def func2():
     global a2
-    cap = cv2.VideoCapture('C:\Users\dharmbir\Desktop\bdh-pro-2\Car.mp4')
-    car_cascade = cv2.CascadeClassifier('C:\Users\dharmbir\Desktop\bdh-pro-2\cars121004.xml')
+    cap = cv2.VideoCapture('Car.mp4')
+    car_cascade = cv2.CascadeClassifier('cars121004.xml')
     for i in range(3):
         ret, frames = cap.read()
         gray = cv2.cvtColor(frames, cv2.COLOR_BGR2GRAY) 
@@ -36,8 +36,8 @@ def func2():
             break
 def func3():
     global a3
-    cap = cv2.VideoCapture('C:\Users\dharmbir\Desktop\bdh-pro-2\Car_3.mp4')
-    car_cascade = cv2.CascadeClassifier('C:\Users\dharmbir\Desktop\bdh-pro-2\cars121004.xml')
+    cap = cv2.VideoCapture('Car_3.mp4')
+    car_cascade = cv2.CascadeClassifier('cars121004.xml')
     for i in range(3):
         ret, frames = cap.read()
         gray = cv2.cvtColor(frames, cv2.COLOR_BGR2GRAY) 
@@ -52,8 +52,8 @@ def func3():
             break
 def func4():
     global a4
-    cap = cv2.VideoCapture('C:\Users\dharmbir\Desktop\bdh-pro-2\Car_4.mp4')
-    car_cascade = cv2.CascadeClassifier('C:\Users\dharmbir\Desktop\bdh-pro-2\cars121004.xml')
+    cap = cv2.VideoCapture('Car_4.mp4')
+    car_cascade = cv2.CascadeClassifier('cars121004.xml')
     for i in range(3):
         ret, frames = cap.read()
         gray = cv2.cvtColor(frames, cv2.COLOR_BGR2GRAY) 
@@ -80,47 +80,7 @@ if __name__=='__main__':
      p1.join()
      p2.join()
      p3.join()
-     p4.join()
-l=[a1,a2,a3,a4]
-print(l)
+
 
 
 cv2.destroyAllWindows() 
-"""
-cap = cv2.VideoCapture(0)
-car_cascade = cv2.CascadeClassifier('cars121004.xml')
-cap.get(20000)
-while True:
-    ret, frames = cap.read()
-    gray = cv2.cvtColor(frames, cv2.COLOR_BGR2GRAY) 
-    cars = car_cascade.detectMultiScale(gray, 1.1, 1)
-    time.sleep(5)
-    a1=len(cars)
-    print(a1)
-    for (x,y,w,h) in cars: 
-        cv2.rectangle(frames,(x,y),(x+w,y+h),(0,0,255),2)
-    cv2.imshow('video2', frames)
-    if cv2.waitKey(33) == 27: 
-        break
-
-
-
-import cv2
-import time
-cap = cv2.VideoCapture('Car.mp4')
-car_cascade = cv2.CascadeClassifier('cars121004.xml')
-while True: 
-    ret, frames = cap.read() 
-    gray = cv2.cvtColor(frames, cv2.COLOR_BGR2GRAY)  
-    cars = car_cascade.detectMultiScale(gray, 1.1, 1)
-    time.sleep(5)
-    a1=len(cars)
-    print(a1)
-    for (x,y,w,h) in cars: 
-        cv2.rectangle(frames,(x,y),(x+w,y+h),(0,0,255),2) 
-    cv2.imshow('video2', frames)
-    
-    if cv2.waitKey(33) == 27: 
-        break
-cv2.destroyAllWindows()
-"""
