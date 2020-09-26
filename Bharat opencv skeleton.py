@@ -1,9 +1,9 @@
 import cv2,multiprocessing,time,math
 cars_lane_1, cars_lane_2,cars_lane_3,cars_lane_4,set_lane_1,set_lane_2,set_lane_3,set_lane_4,flag1,flag2,flag3,flag4 = 0,0,0,0,0,0,0,0,0,0,0,0
 lane_order=[]
-threshold=35
+threshold=16
 car_cascade = cv2.CascadeClassifier('cars121004.xml')           # Trained XML classifiers describes some features of some object we want to detect
-initial_timer=40
+initial_timer_1,initial_timer_2,initial_timer_3,initial_timer_4=40,40,40,40
 
 def lane_check_1(q1,fg1,order):
     global cars_lane_1,set_lane_1
@@ -11,6 +11,7 @@ def lane_check_1(q1,fg1,order):
     cap = cv2.VideoCapture(0)
     t_end=time.time()+10
     queue_value=0
+
 
     while True:
         ret, frames = cap.read()                                    # reads frames from a video
@@ -123,35 +124,35 @@ def lane_check_4(q4,fg4,order):
 def light_lane_1(initial_timer1=40):
     initial_timer_1= time.time()+initial_timer1
     while time.time()<initial_timer_1:
-        print("GREEN")
+        print("GREEN")                  ################### serial communication of green light to be done ###########
         time.sleep(1)
 
 
 def light_lane_2(initial_timer2=40):
     initial_timer_2 = time.time() + initial_timer2
     while time.time() < initial_timer_2:
-        print("GREEN_1")
+        print("GREEN_1")                ################### serial communication of green light to be done ###########
         time.sleep(2)
 
 
 def light_lane_3(initial_timer3=40):
     initial_timer_3 = time.time() + initial_timer3
     while time.time() < initial_timer_3:
-        print("GREEN")
+        print("GREEN_2")                ################### serial communication of green light to be done ###########
         time.sleep(1)
 
 
 def light_lane_4(initial_timer4=40):
     initial_timer_4 = time.time() + initial_timer4
     while time.time() < initial_timer_4:
-        print("GREEN_2")
+        print("GREEN_3")                ################### serial communication of green light to be done ###########
         time.sleep(1)
 
 
-def red_light(initial_timerR):
-    initial_timer_red = time.time() + initial_timerR
+def red_light(initial_timer_r=40):
+    initial_timer_red = time.time() + initial_timer_r
     while time.time() < initial_timer_red:
-        print("RED")
+        print("RED")                    ################### serial communication of red light to be done ###########
         time.sleep(1)
 
 
@@ -173,10 +174,10 @@ if __name__ == '__main__':
             process6 = multiprocessing.Process(target=light_lane_2, args=())
             process7 = multiprocessing.Process(target=light_lane_3, args=())
             process8 = multiprocessing.Process(target=light_lane_4, args=())
-            process1=multiprocessing.Process(target=lane_check_1,args=(q1,fg1,order,))
-            process2=multiprocessing.Process(target=lane_check_2,args=(q2,fg2,order,))
-            process3=multiprocessing.Process(target=lane_check_3,args=(q3,fg3,order,))
-            process4=multiprocessing.Process(target=lane_check_4,args=(q4,fg4,order,))
+            process1 = multiprocessing.Process(target=lane_check_1,args=(q1,fg1,order,))
+            process2 = multiprocessing.Process(target=lane_check_2,args=(q2,fg2,order,))
+            process3 = multiprocessing.Process(target=lane_check_3,args=(q3,fg3,order,))
+            process4 = multiprocessing.Process(target=lane_check_4,args=(q4,fg4,order,))
             process1.start(),process2.start(), process3.start(), process4.start()
             flag1 = fg1.get()
             flag2 = fg2.get()
@@ -214,10 +215,14 @@ if __name__ == '__main__':
             value_2 = a2 / (a1 + a2 + a3 + a4)
             value_3 = a3 / (a1 + a2 + a3 + a4)
             value_4 = a4 / (a1 + a2 + a3 + a4)
-            update_1 = initial_timer + initial_timer * value_1 * (math.log(value_1/0.25 , 10))
-            update_2 = initial_timer + initial_timer * value_2 * (math.log(value_2/0.25 , 10))
-            update_3 = initial_timer + initial_timer * value_3 * (math.log(value_3/0.25 , 10))
-            update_4 = initial_timer + initial_timer * value_4 * (math.log(value_4/0.25 , 10))
+            update_1 = initial_timer_1 + initial_timer_1 * value_1 * (math.log(value_1/0.25 , 10))
+            update_2 = initial_timer_2 + initial_timer_2 * value_2 * (math.log(value_2/0.25 , 10))
+            update_3 = initial_timer_3 + initial_timer_3 * value_3 * (math.log(value_3/0.25 , 10))
+            update_4 = initial_timer_4 + initial_timer_4 * value_4 * (math.log(value_4/0.25 , 10))
+            initial_timer_1=update_1
+            initial_timer_2=update_2
+            initial_timer_3=update_3
+            initial_timer_4=update_4
 
 ###########################################################################################################
 
@@ -226,21 +231,31 @@ if __name__ == '__main__':
                 z=order.get()
                 print("value is ",z)
                 if z == 1:
-                    print("LANE 1 GIVEN GREEN")
-                    print("OTHER LANES GIVEN RED")
+                    process9 = multiprocessing.Process(target=red_light, args=())
+                    process9.start()
+                    light_lane_1(update_1)
+                    process9.join()
+                    process9.terminate()
                 elif z == 2:
-                    print("LANE 2 GIVEN GREEN")
-                    print("OTHER LANES GIVEN RED")
-                    process6.start()
-                    process6.join()
+                    process9 = multiprocessing.Process(target=red_light, args=())
+                    process9.start()
+                    light_lane_1(update_2)
+                    process9.join()
+                    process9.terminate()
                 elif z == 3:
-                    print("LANE 3 GIVEN GREEN")
-                    print("OTHER LANES GIVEN RED")
+                    process9 = multiprocessing.Process(target=red_light, args=())
+                    process9.start()
+                    light_lane_1(update_3)
+                    process9.join()
+                    process9.terminate()
                 elif z == 4:
-                    print("LANE 4 GIVEN GREEN")
-                    print("OTHER LANES GIVEN RED")
-                    process8.start()
-                time.sleep(2)
+                    process9 = multiprocessing.Process(target=red_light, args=())
+                    process9.start()
+                    light_lane_1(update_4)
+                    process9.join()
+                    process9.terminate()
+                else :
+                    pass
                 print(lane_order)
                 print(lane_order.index(max(lane_order)))
 
@@ -252,3 +267,8 @@ if __name__ == '__main__':
 
 # LANE DETECTION DONE LANE TIMER PARTIALLY PERFORMED
 # VALUE UPDATE LEFT
+
+
+# Make sure program raspberry pi GPIO in accordance to the timer values of specific function
+
+# REFER GPIO PROGRAMMING OF RASPBERRY PI FOR LIGHT BLINKING
