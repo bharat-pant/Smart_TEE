@@ -1,4 +1,5 @@
 import cv2,multiprocessing,time,math
+import RPi.GPIO as GPIO
 cars_lane_1, cars_lane_2,cars_lane_3,cars_lane_4,set_lane_1,set_lane_2,set_lane_3,set_lane_4,flag1,flag2,flag3,flag4 = 0,0,0,0,0,0,0,0,0,0,0,0
 lane_order=[]
 threshold=16
@@ -123,37 +124,60 @@ def lane_check_4(q4,fg4,order):
 
 def light_lane_1(initial_timer1=40):
     initial_timer_1= time.time()+initial_timer1
+    GPIO.cleanup()
+    GPIO.setmode(GPIO.BOARD)
+    LED = 11
+    GPIO.setup(LED, GPIO.OUT)
     while time.time()<initial_timer_1:
-        print("GREEN")                  ################### serial communication of green light to be done ###########
+        GPIO.output(LED,True)
         time.sleep(1)
-
+    GPIO.cleanup()
 
 def light_lane_2(initial_timer2=40):
     initial_timer_2 = time.time() + initial_timer2
+    GPIO.cleanup()
+    GPIO.setmode(GPIO.BOARD)
+    LED = 12
+    GPIO.setup(LED, GPIO.OUT)
     while time.time() < initial_timer_2:
-        print("GREEN_1")                ################### serial communication of green light to be done ###########
-        time.sleep(2)
-
+        GPIO.output(LED, True)
+        time.sleep(1)
+    GPIO.cleanup()
 
 def light_lane_3(initial_timer3=40):
     initial_timer_3 = time.time() + initial_timer3
+    GPIO.cleanup()
+    GPIO.setmode(GPIO.BOARD)
+    LED = 13
+    GPIO.setup(LED, GPIO.OUT)
     while time.time() < initial_timer_3:
-        print("GREEN_2")                ################### serial communication of green light to be done ###########
+        GPIO.output(LED, True)
         time.sleep(1)
-
+    GPIO.cleanup()
 
 def light_lane_4(initial_timer4=40):
     initial_timer_4 = time.time() + initial_timer4
+    GPIO.cleanup()
+    GPIO.setmode(GPIO.BOARD)
+    LED = 14
+    GPIO.setup(LED, GPIO.OUT)
     while time.time() < initial_timer_4:
-        print("GREEN_3")                ################### serial communication of green light to be done ###########
+        GPIO.output(LED, True)
         time.sleep(1)
+    GPIO.cleanup()
 
 
 def red_light(initial_timer_r=40):
     initial_timer_red = time.time() + initial_timer_r
+    GPIO.cleanup()
+    GPIO.setmode(GPIO.BOARD)
+    LED = 15
+    GPIO.setup(LED, GPIO.OUT)
     while time.time() < initial_timer_red:
-        print("RED")                    ################### serial communication of red light to be done ###########
+        GPIO.output(LED, True)
         time.sleep(1)
+    GPIO.cleanup()
+
 
 
 if __name__ == '__main__':
