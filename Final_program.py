@@ -1,16 +1,15 @@
 import cv2,multiprocessing,time,math
-import RPi.GPIO as GPIO
-cars_lane_1, cars_lane_2,cars_lane_3,cars_lane_4,set_lane_1,set_lane_2,set_lane_3,set_lane_4,flag1,flag2,flag3,flag4 = 0,0,0,0,0,0,0,0,0,0,0,0
-lane_order=[]
+#import RPi.GPIO as GPIO
+number_of_cars=[]
 threshold=16
-car_cascade = cv2.CascadeClassifier('cars121004.xml')           # Trained XML classifiers describes some features of some object we want to detect
 initial_timer_1,initial_timer_2,initial_timer_3,initial_timer_4=40,40,40,40
+car_cascade = cv2.CascadeClassifier('cars121004.xml')     #CARS CLASSIFIER
+
 
 def lane_check_1(q1,fg1,order):
-    global cars_lane_1,set_lane_1
     set_lane_1=set()
     cap = cv2.VideoCapture(0)
-    t_end=time.time()+10
+    t_end=time.time()+20
     queue_value=0
     while True:
         ret, frames = cap.read()                                    # reads frames from a video
@@ -28,7 +27,7 @@ def lane_check_1(q1,fg1,order):
             order.put(1)
             break
         elif time.time()>=t_end:
-            order.put(0)
+            #order.put(0)
             break
     q1.put(max(set_lane_1))
     fg1.put(queue_value)
@@ -36,10 +35,9 @@ def lane_check_1(q1,fg1,order):
 
 
 def lane_check_2(q2,fg2,order):
-    global cars_lane_2, set_lane_2
     set_lane_2=set()
     cap = cv2.VideoCapture('videos/jan28.avi')
-    t_end=time.time()+10
+    t_end=time.time()+20
     queue_value=0
     while True:
         ret, frames = cap.read()                                    # reads frames from a video
@@ -56,7 +54,7 @@ def lane_check_2(q2,fg2,order):
             order.put(2)
             break
         elif time.time()>=t_end:
-            order.put(0)
+            #order.put(0)
             break
     q2.put(max(set_lane_2))
     fg2.put(queue_value)
@@ -64,10 +62,9 @@ def lane_check_2(q2,fg2,order):
 
 
 def lane_check_3(q3,fg3,order):
-    global cars_lane_3, set_lane_3
     set_lane_3=set()
     cap = cv2.VideoCapture('videos/march9.avi')
-    t_end = time.time() + 10
+    t_end = time.time() + 20
     queue_value=0
     while True:
         ret, frames = cap.read()                                    # reads frames from a video
@@ -84,7 +81,7 @@ def lane_check_3(q3,fg3,order):
             order.put(3)
             break
         elif time.time()>=t_end:
-            order.put(0)
+            #order.put(0)
             break
     q3.put(max(set_lane_3))
     fg3.put(queue_value)
@@ -92,10 +89,9 @@ def lane_check_3(q3,fg3,order):
 
 
 def lane_check_4(q4,fg4,order):
-    global cars_lane_4,set_lane_4
     set_lane_4=set()
     cap = cv2.VideoCapture('videos/april21.avi')
-    t_end = time.time() + 10
+    t_end = time.time() + 20
     queue_value=0
     while True:
         ret, frames = cap.read()                                    # reads frames from a video
@@ -113,69 +109,28 @@ def lane_check_4(q4,fg4,order):
             order.put(4)
             break
         elif time.time()>=t_end:
-            order.put(0)
+            #order.put(0)
             break
     q4.put(max(set_lane_4))
     fg4.put(queue_value)
     cv2.destroyAllWindows()                                         # De-allocate any associated memory usage
 
 
-def light_lane_1(initial_timer1=40):
-    initial_timer_1= time.time()+initial_timer1
-    #GPIO.cleanup()
-    GPIO.setmode(GPIO.BOARD)
-    LED = 11
-    GPIO.setup(LED, GPIO.OUT)
-    while time.time()<initial_timer_1:
-        GPIO.output(LED,True)
-        time.sleep(1)
-    GPIO.cleanup()
-
-def light_lane_2(initial_timer2=40):
-    initial_timer_2 = time.time() + initial_timer2
-    GPIO.cleanup()
-    GPIO.setmode(GPIO.BOARD)
-    LED = 12
-    GPIO.setup(LED, GPIO.OUT)
-    while time.time() < initial_timer_2:
-        GPIO.output(LED, True)
-        time.sleep(1)
-    GPIO.cleanup()
-
-def light_lane_3(initial_timer3=40):
-    initial_timer_3 = time.time() + initial_timer3
-    GPIO.cleanup()
-    GPIO.setmode(GPIO.BOARD)
-    LED = 13
-    GPIO.setup(LED, GPIO.OUT)
-    while time.time() < initial_timer_3:
-        GPIO.output(LED, True)
-        time.sleep(1)
-    GPIO.cleanup()
-
-def light_lane_4(initial_timer4=40):
-    initial_timer_4 = time.time() + initial_timer4
-    GPIO.cleanup()
-    GPIO.setmode(GPIO.BOARD)
-    LED = 14
-    GPIO.setup(LED, GPIO.OUT)
-    while time.time() < initial_timer_4:
-        GPIO.output(LED, True)
-        time.sleep(1)
-    GPIO.cleanup()
-
-
-def red_light(initial_timer_r=40):
-    initial_timer_red = time.time() + initial_timer_r
-    GPIO.cleanup()
-    GPIO.setmode(GPIO.BOARD)
-    LED = 15
-    GPIO.setup(LED, GPIO.OUT)
-    while time.time() < initial_timer_red:
-        GPIO.output(LED, True)
-        time.sleep(1)
-    GPIO.cleanup()
-
+def algorithm(a1,a2,a3,a4):                          # FUNCTION FOR ALGORITHM
+    global initial_timer_1,initial_timer_2,initial_timer_3,initial_timer_4
+    value_1 = a1 / (a1 + a2 + a3 + a4)
+    value_2 = a2 / (a1 + a2 + a3 + a4)
+    value_3 = a3 / (a1 + a2 + a3 + a4)
+    value_4 = a4 / (a1 + a2 + a3 + a4)
+    update_1 = initial_timer_1 + initial_timer_1 * value_1 * (math.log(value_1 / 0.25, 10))
+    update_2 = initial_timer_2 + initial_timer_2 * value_2 * (math.log(value_2 / 0.25, 10))
+    update_3 = initial_timer_3 + initial_timer_3 * value_3 * (math.log(value_3 / 0.25, 10))
+    update_4 = initial_timer_4 + initial_timer_4 * value_4 * (math.log(value_4 / 0.25, 10))
+    initial_timer_1 = update_1
+    initial_timer_2 = update_2
+    initial_timer_3 = update_3
+    initial_timer_4 = update_4
+    return initial_timer_1,initial_timer_2,initial_timer_3,initial_timer_4
 
 
 if __name__ == '__main__':
@@ -192,10 +147,10 @@ if __name__ == '__main__':
         order = multiprocessing.Queue()
 
         while True:
-            process5 = multiprocessing.Process(target=light_lane_1, args=())
-            process6 = multiprocessing.Process(target=light_lane_2, args=())
-            process7 = multiprocessing.Process(target=light_lane_3, args=())
-            process8 = multiprocessing.Process(target=light_lane_4, args=())
+            #process5 = multiprocessing.Process(target=light_lane_1, args=())
+            #process6 = multiprocessing.Process(target=light_lane_2, args=())
+            #process7 = multiprocessing.Process(target=light_lane_3, args=())
+            #process8 = multiprocessing.Process(target=light_lane_4, args=())
             process1 = multiprocessing.Process(target=lane_check_1,args=(q1,fg1,order,))
             process2 = multiprocessing.Process(target=lane_check_2,args=(q2,fg2,order,))
             process3 = multiprocessing.Process(target=lane_check_3,args=(q3,fg3,order,))
@@ -206,91 +161,53 @@ if __name__ == '__main__':
             flag3 = fg3.get()
             flag4 = fg4.get()
 
-            a1,a2,a3,a4=q1.get(),q2.get(),q3.get(),q4.get()
+            a1, a2, a3, a4 = q1.get(), q2.get(), q3.get(), q4.get()
 
-            print(flag1,flag2,flag3,flag4)
+            print(flag1, flag2, flag3, flag4)
             process1.terminate()
             process2.terminate()
             process3.terminate()
             process4.terminate()
-            lane_order.append(a1)
-            lane_order.append(a2)
-            lane_order.append(a3)
-            lane_order.append(a4)
 
-            if a1==0:
-                a1=1
-            elif a2==0:
-                a2=1
-            elif a3==0:
-                a3=1
-            elif a4==0:
-                a4=1
+            if a1 == 0:
+                a1 = 1
+            elif a2 == 0:
+                a2 = 1
+            elif a3 == 0:
+                a3 = 0
+            elif a4 == 0:
+                a4 = 1
             else:
                 pass
 
-###########################################################################################################
+            number_of_cars.append(a1)
+            number_of_cars.append(a2)
+            number_of_cars.append(a3)
+            number_of_cars.append(a4)
+            print(number_of_cars)
 
-            """VALUE UPDATES"""
-
-            value_1 = a1 / (a1+a2+a3+a4)
-            value_2 = a2 / (a1 + a2 + a3 + a4)
-            value_3 = a3 / (a1 + a2 + a3 + a4)
-            value_4 = a4 / (a1 + a2 + a3 + a4)
-            update_1 = initial_timer_1 + initial_timer_1 * value_1 * (math.log(value_1/0.25 , 10))
-            update_2 = initial_timer_2 + initial_timer_2 * value_2 * (math.log(value_2/0.25 , 10))
-            update_3 = initial_timer_3 + initial_timer_3 * value_3 * (math.log(value_3/0.25 , 10))
-            update_4 = initial_timer_4 + initial_timer_4 * value_4 * (math.log(value_4/0.25 , 10))
-            initial_timer_1=update_1
-            initial_timer_2=update_2
-            initial_timer_3=update_3
-            initial_timer_4=update_4
-
-###########################################################################################################
-
-            print(update_1,update_2,update_3,update_4)
+            print(algorithm(a1,a2,a3,a4))
             for i in range(order.qsize()):
                 z=order.get()
                 print("value is ",z)
                 if z == 1:
-                    process9 = multiprocessing.Process(target=red_light, args=())
-                    process9.start()
-                    light_lane_1(update_1)
-                    process9.join()
-                    process9.terminate()
+                    print(1)
+                    # print("green on lane 1")
+                    # print("red on other lanes")
                 elif z == 2:
-                    process9 = multiprocessing.Process(target=red_light, args=())
-                    process9.start()
-                    light_lane_1(update_2)
-                    process9.join()
-                    process9.terminate()
+                    print(2)
+                    # print("green on lane 2")
+                    # print("red on other lanes")
                 elif z == 3:
-                    process9 = multiprocessing.Process(target=red_light, args=())
-                    process9.start()
-                    light_lane_1(update_3)
-                    process9.join()
-                    process9.terminate()
+                    print(3)
+                    # print("green on lane 3")
+                    # print("red on other lanes")
                 elif z == 4:
-                    process9 = multiprocessing.Process(target=red_light, args=())
-                    process9.start()
-                    light_lane_1(update_4)
-                    process9.join()
-                    process9.terminate()
-                else :
-                    pass
-                print(lane_order)
-                print(lane_order.index(max(lane_order)))
-
-###################################################################################################################
-
-'''flag updation to be performed'''
-
-# LANE DETECTION PARTIALLY PERFORMED INSTEAD OF FLAG PUSH IN QUEUE AND GET BACK VALUES
-
-# LANE DETECTION DONE LANE TIMER PARTIALLY PERFORMED
-# VALUE UPDATE LEFT
+                    print(4)
+                    # print("green on lane 4")
+                    # print("red on other lanes")
+            else :
+                print("function call back to processing")
 
 
-# Make sure program raspberry pi GPIO in accordance to the timer values of specific function
-
-# REFER GPIO PROGRAMMING OF RASPBERRY PI FOR LIGHT BLINKING
+"""YAAD RAKHNA KI 4 FUNCTIONS BANANE HAI AND HAR FUNCTION ME RESPECTIVE GREEN KARKE BAAKI SAARE RED KARNE HAI"""
