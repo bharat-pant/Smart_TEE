@@ -7,31 +7,45 @@ car_cascade = cv2.CascadeClassifier('cars121004.xml')     #CARS CLASSIFIER
 
 
 def lane_check_1(q1,fg1,order):
-    set_lane_1=set()
-    cap = cv2.VideoCapture(0)
-    t_end=time.time()+20
-    queue_value=0
-    while True:
-        ret, frames = cap.read()                                    # reads frames from a video
-        gray = cv2.cvtColor(frames, cv2.COLOR_BGR2GRAY)
+    global cars_lane_1, set_lane_1
+    set_lane_1 = set()
+    # cap = cv2.VideoCapture(0)
+    camera = PiCamera()
+    camera.resolution = (640, 480)
+    camera.framerate = 32
+    rawCapture = PiRGBArray(camera, size=(640, 480))
+    time.sleep(0.1)
+    t_end = time.time() + 5
+    queue_value = 0
+
+    for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+        image = frame.array
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
         cars = car_cascade.detectMultiScale(gray, 1.1, 1)
-        cars_lane_1=len(cars)
+
+        for (x, y, w, h) in cars:
+            cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
+
+        cars_lane_1 = len(cars)
         set_lane_1.add(cars_lane_1)
+        # cv2.imshow("Frame", image)
+        key = cv2.waitKey(1) & 0xFF
 
-        for (x,y,w,h) in cars:
-            cv2.rectangle(frames,(x,y),(x+w,y+h),(0,0,255),2)
+        rawCapture.truncate(0)
 
-        cv2.imshow('video2', frames)                                # Display frames in a window
-        if cv2.waitKey(33) == 27 or max(set_lane_1)>threshold:                              #threshold ki jagah 10 dala hai
-            queue_value=1
+        if key == ord("q") or max(set_lane_1) > threshold:
+            queue_value = 1
             order.put(1)
             break
-        elif time.time()>=t_end:
-            #order.put(0)
+        elif time.time() >= t_end:
+            order.put(0)
             break
+
     q1.put(max(set_lane_1))
     fg1.put(queue_value)
-    cv2.destroyAllWindows()                                         # De-allocate any associated memory usage
+    cv2.destroyAllWindows()
+    # De-allocate any associated memory usage
 
 
 def lane_check_2(q2,fg2,order):
@@ -133,52 +147,75 @@ def algorithm(a1,a2,a3,a4):                          # FUNCTION FOR ALGORITHM
     return initial_timer_1,initial_timer_2,initial_timer_3,initial_timer_4
 
 
-def normal_timer():
-    count=0
-    count = count + 1
-    if count >= 40:
-        count = 0
-    if count % 4 == 1:
+def normal_timer(z):
+    z = z + 1
+    if z >= 40:
+        z = 0
+    if z % 4 == 1:
         print("lane1 green baaki saare red")
-        initial_timer_1 = time.time() + 40
+        normal_time_lane_1 = time.time() + 40
         GPIO.setmode(GPIO.BOARD)
         LED = 11
         GPIO.setup(LED, GPIO.OUT)
-        while time.time() < initial_timer_1:
+        GPIO.setup(22, GPIO.OUT)
+        GPIO.setup(32, GPIO.OUT)
+        GPIO.setup(36, GPIO.OUT)
+        while time.time() < normal_time_lane_1:
             GPIO.output(LED, True)
+            GPIO.output(22, True)
+            GPIO.output(32, True)
+            GPIO.output(36, True)
             time.sleep(1)
         GPIO.cleanup()
 
-    elif count % 4 == 2:
+    elif z % 4 == 2:
         print("lane2 green baaki saare red")
-        initial_timer_2 = time.time() + 40
-        GPIO.setmode(GPIO.BOARD)
-        LED = 12
-        GPIO.setup(LED, GPIO.OUT)
-        while time.time() < initial_timer_2:
-            GPIO.output(LED, True)
-            time.sleep(1)
-        GPIO.cleanup()
-
-    elif count % 4 == 3:
-        print("lane3 green baaki saare red")
-        initial_timer_3 = time.time() + 40
+        normal_time_lane_2 = time.time() + 40
         GPIO.setmode(GPIO.BOARD)
         LED = 13
         GPIO.setup(LED, GPIO.OUT)
-        while time.time() < initial_timer_3:
+        GPIO.setup(18, GPIO.OUT)
+        GPIO.setup(32, GPIO.OUT)
+        GPIO.setup(36, GPIO.OUT)
+        while time.time() < normal_time_lane_2:
             GPIO.output(LED, True)
+            GPIO.output(18, True)
+            GPIO.output(32, True)
+            GPIO.output(36, True)
             time.sleep(1)
         GPIO.cleanup()
-        
+
+    elif z % 4 == 3:
+        print("lane3 green baaki saare red")
+        normal_time_lane_3 = time.time() + 40
+        GPIO.setmode(GPIO.BOARD)
+        LED = 15
+        GPIO.setup(LED, GPIO.OUT)
+        GPIO.setup(22, GPIO.OUT)
+        GPIO.setup(18, GPIO.OUT)
+        GPIO.setup(36, GPIO.OUT)
+        while time.time() < normal_time_lane_3:
+            GPIO.output(LED, True)
+            GPIO.output(18, True)
+            GPIO.output(22, True)
+            GPIO.output(36, True)
+            time.sleep(1)
+        GPIO.cleanup()
+
     else:
         print("lane 4 green baaki saare red")
-        initial_timer_4 = time.time() + 40
+        normal_time_lane_4= time.time() + 40
         GPIO.setmode(GPIO.BOARD)
-        LED = 14
+        LED = 16
         GPIO.setup(LED, GPIO.OUT)
-        while time.time() < initial_timer_4:
+        GPIO.setup(22, GPIO.OUT)
+        GPIO.setup(18, GPIO.OUT)
+        GPIO.setup(32, GPIO.OUT)
+        while time.time() < normal_time_lane_4:
             GPIO.output(LED, True)
+            GPIO.output(18, True)
+            GPIO.output(22, True)
+            GPIO.output(32, True)
             time.sleep(1)
         GPIO.cleanup()
 
@@ -234,59 +271,83 @@ if __name__ == '__main__':
             time1,time2,time3,time4=algorithm(a1,a2,a3,a4)
 
             print(algorithm(a1,a2,a3,a4))
+            z = 0
             for i in range(order.qsize()):
-                z=order.get()
-                print("value is ",z)
+                z = order.get()
+                print("value is ", z)
                 if z == 1:
-                    initial_timer_1 = time.time() + time1
+                    time_1 = time.time() + time1
                     GPIO.setmode(GPIO.BOARD)
                     LED = 11
                     GPIO.setup(LED, GPIO.OUT)
-                    while time.time() < initial_timer_1:
+                    GPIO.setup(22, GPIO.OUT)
+                    GPIO.setup(32, GPIO.OUT)
+                    GPIO.setup(36, GPIO.OUT)
+                    while time.time() < time_1:
                         GPIO.output(LED, True)
+                        GPIO.output(22, True)
+                        GPIO.output(32, True)
+                        GPIO.output(36, True)
                         time.sleep(1)
                     GPIO.cleanup()
                     print("green on lane 1")
                     print("red on other lanes")
 
                 elif z == 2:
-                    initial_timer_2 = time.time() + time2
+                    time_2 = time.time() + time2
                     GPIO.setmode(GPIO.BOARD)
-                    LED = 12
+                    LED = 13
                     GPIO.setup(LED, GPIO.OUT)
-                    while time.time() < initial_timer_2:
+                    GPIO.setup(18, GPIO.OUT)
+                    GPIO.setup(32, GPIO.OUT)
+                    GPIO.setup(36, GPIO.OUT)
+                    while time.time() < time_2:
                         GPIO.output(LED, True)
+                        GPIO.output(18, True)
+                        GPIO.output(32, True)
+                        GPIO.output(36, True)
                         time.sleep(1)
                     GPIO.cleanup()
                     # print("green on lane 2")
                     # print("red on other lanes")
 
                 elif z == 3:
-                    initial_timer_3 = time.time() + time3
+                    time_3 = time.time() + time3
                     GPIO.setmode(GPIO.BOARD)
-                    LED = 13
+                    LED = 15
                     GPIO.setup(LED, GPIO.OUT)
-                    while time.time() < initial_timer_3:
+                    GPIO.setup(22, GPIO.OUT)
+                    GPIO.setup(18, GPIO.OUT)
+                    GPIO.setup(36, GPIO.OUT)
+                    while time.time() < time_3:
                         GPIO.output(LED, True)
+                        GPIO.output(18, True)
+                        GPIO.output(22, True)
+                        GPIO.output(36, True)
                         time.sleep(1)
                     GPIO.cleanup()
                     # print("green on lane 3")
                     # print("red on other lanes")
 
                 elif z == 4:
-                    initial_timer_4 = time.time() + time4
+                    time_4 = time.time() + time4
                     GPIO.setmode(GPIO.BOARD)
-                    LED = 14
+                    LED = 16
                     GPIO.setup(LED, GPIO.OUT)
-                    while time.time() < initial_timer_4:
+                    GPIO.setup(22, GPIO.OUT)
+                    GPIO.setup(18, GPIO.OUT)
+                    GPIO.setup(32, GPIO.OUT)
+                    while time.time() < time_4:
                         GPIO.output(LED, True)
+                        GPIO.output(18, True)
+                        GPIO.output(22, True)
+                        GPIO.output(32, True)
                         time.sleep(1)
                     GPIO.cleanup()
                     # print("green on lane 4")
                     # print("red on other lanes")
-            else :
-                normal_timer()
+            else:
+                normal_timer(z)
                 print("function call back to processing")
-
 
 """YAAD RAKHNA KI 4 FUNCTIONS BANANE HAI AND HAR FUNCTION ME RESPECTIVE GREEN KARKE BAAKI SAARE RED KARNE HAI"""
