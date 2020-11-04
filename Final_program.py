@@ -1,4 +1,4 @@
-import cv2,multiprocessing,time,math
+import cv2,multiprocessing,time,math,bluetooth
 import RPi.GPIO as GPIO
 number_of_cars=[]
 threshold=16
@@ -220,6 +220,40 @@ def normal_timer(z):
         GPIO.cleanup()
 
 
+# def bluetooth_call():
+#     LED = 21
+#
+#     GPIO.setmode(GPIO.BOARD)
+#     GPIO.setwarnings(False)
+#     GPIO.setup(LED, GPIO.OUT)
+#     GPIO.output(LED, 0)
+#
+#     server_socket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+#
+#     port = 1
+#     server_socket.bind(("", port))
+#     server_socket.listen(1)
+#
+#     client_socket, address = server_socket.accept()
+#     print("Accepted connection from ", address)
+#     while True:
+#
+#         data = client_socket.recv(1024)
+#         print("Received: %s" % data)
+#         if data == "0":  # if '0' is sent from the Android App, turn OFF the LED
+#             print("GPIO 21 LOW, LED OFF")
+#             GPIO.output(LED, 1)
+#         if data == "1":  # if '1' is sent from the Android App, turn OFF the LED
+#             print("GPIO 21 HIGH, LED ON")
+#             GPIO.output(LED, 1)
+#         if data == "q":
+#             print("Quit")
+#             break
+#
+#     client_socket.close()
+#     server_socket.close()
+
+
 if __name__ == '__main__':
     with multiprocessing.Manager() as manager:
         value = manager.list()
@@ -351,3 +385,7 @@ if __name__ == '__main__':
                 print("function call back to processing")
 
 """YAAD RAKHNA KI 4 FUNCTIONS BANANE HAI AND HAR FUNCTION ME RESPECTIVE GREEN KARKE BAAKI SAARE RED KARNE HAI"""
+
+
+""" YAAD RAKHNA HAI KI BLUETOOTH WALA MAIN FUNCTION ME PROCESS DECLARATION KE BAAD AAYEGA AND BLUETOOTH WALE ME GPIO 
+ASSIGN KARNI HAI """
