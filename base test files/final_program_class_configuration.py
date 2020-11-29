@@ -4,7 +4,7 @@ from picamera.array import PiRGBArray
 from picamera import PiCamera
 
 number_of_cars = []
-order_of_ambulance = [0]
+order_of_ambulance = []
 threshold = 16
 initial_timer_1, initial_timer_2, initial_timer_3, initial_timer_4 = 40, 40, 40, 40
 car_cascade = cv2.CascadeClassifier('/home/pi/Desktop/cars.xml')  # CARS CLASSIFIER
@@ -180,7 +180,7 @@ def bluetooth_call():
         ab = str(data.decode('utf-8'))
         if int(ab) == 0:
             order_of_ambulance.pop(0)
-            return 0
+            return [0]
         else:
             order_of_ambulance.append(int(ab))
             print(type(ab))
@@ -192,10 +192,10 @@ def bluetooth_call():
         # if a=="1" or a==4"" or a=="2" or a=="3":
 
 
-def ambulance_call(a):
+def ambulance_call(blue):
     global n
-    while len(a) != 0:
-        if a[0] == "1":
+    while len(blue) != 0:
+        if blue[0] == "1":
             while True:
                 GPIO.output(11, True)
                 GPIO.output(22, True)
@@ -203,14 +203,14 @@ def ambulance_call(a):
                 GPIO.output(36, True)
                 time.sleep(1)
                 b = bluetooth_call()
-                if b == "0":
+                if b[0] == "0":
                     GPIO.cleanup()
                     break
                 else:
-                    a = b
+                    blue = b
                     # return 0
 
-        elif a[0] == "2":
+        elif blue[0] == "2":
             while True:
                 GPIO.output(13, True)
                 GPIO.output(18, True)
@@ -222,10 +222,10 @@ def ambulance_call(a):
                     GPIO.cleanup()
                     break
                 else:
-                    a = b
+                    blue = b
                     # return 0
 
-        elif a[0] == "3":
+        elif blue[0] == "3":
             while True:
                 GPIO.output(15, True)
                 GPIO.output(18, True)
@@ -237,10 +237,10 @@ def ambulance_call(a):
                     GPIO.cleanup()
                     break
                 else:
-                    a = b
+                    blue = b
                     # return 0
 
-        elif a[0] == "4":
+        elif blue[0] == "4":
             while True:
                 GPIO.output(16, True)
                 GPIO.output(18, True)
@@ -253,9 +253,9 @@ def ambulance_call(a):
                     # return 0
                     break
                 else:
-                    a = b
+                    blue = b
                     # return 0
-        a.pop(0)
+        blue.pop(0)
 
 
 def normal_timer():
@@ -273,11 +273,11 @@ def normal_timer():
             GPIO.output(32, True)
             GPIO.output(36, True)
             time.sleep(1)
-            a = bluetooth_call()
-            if len(a) != 0:
+            blue = bluetooth_call()
+            if len(blue) != 0:
                 print("Ambulance call")
                 GPIO.cleanup()
-                ambulance_call(a)
+                ambulance_call(blue)
                 break
                 # break
 
@@ -293,11 +293,11 @@ def normal_timer():
             GPIO.output(32, True)
             GPIO.output(36, True)
             time.sleep(1)
-            a = bluetooth_call()
-            if len(a) != 0:
+            blue = bluetooth_call()
+            if len(blue) != 0:
                 print("Ambulance call")
                 GPIO.cleanup()
-                ambulance_call(a)
+                ambulance_call(blue)
                 break
                 # break
 
@@ -312,11 +312,11 @@ def normal_timer():
             GPIO.output(22, True)
             GPIO.output(36, True)
             time.sleep(1)
-            a = bluetooth_call()
-            if len(a) != 0:
+            blue = bluetooth_call()
+            if len(blue) != 0:
                 print("Ambulance call")
                 GPIO.cleanup()
-                ambulance_call(a)
+                ambulance_call(blue)
                 break
                 # break
         GPIO.cleanup()
@@ -330,11 +330,11 @@ def normal_timer():
             GPIO.output(22, True)
             GPIO.output(32, True)
             time.sleep(1)
-            a = bluetooth_call()
-            if len(a) != 0:
+            blue = bluetooth_call()
+            if len(blue) != 0:
                 print("Ambulance call")
                 GPIO.cleanup()
-                ambulance_call(a)
+                ambulance_call(blue)
                 break
         GPIO.cleanup()
 
@@ -499,3 +499,6 @@ ASSIGN KARNI HAI """
 
 """ DATE: 17TH NOVEMBER UPDATE """
 """ MULTIPLE EV CORRECTED"""
+""" ISME SIRF GPIO REAARANGE KA KE DEHNA BAAKI SAB THIK HAI AGAR GPIO KI DIKKAT AA RAHI HAI TO HAR JAGAH AA KAR GPIO KE
+ HISAB SE SET MODE DECLARE KAR DENA OR YOU CAN COPY FUNCTION ME JO CHANGES KIYE THE LIKE BLUE INTRODUCE KIYA HAI IN THE
+  AMBULANCE CALL USE EDIT KAR KE DEKH LENA"""
