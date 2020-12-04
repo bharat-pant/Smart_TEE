@@ -1,21 +1,21 @@
 import cv2,multiprocessing,time,math
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 cars_lane_1, cars_lane_2,cars_lane_3,cars_lane_4,set_lane_1,set_lane_2,set_lane_3,set_lane_4,flag1,flag2,flag3,flag4 = 0,0,0,0,0,0,0,0,0,0,0,0
 lane_order=[]
-threshold=16
+threshold=150
 car_cascade = cv2.CascadeClassifier('cars121004.xml')           # Trained XML classifiers describes some features of some object we want to detect
 initial_timer_1,initial_timer_2,initial_timer_3,initial_timer_4=40,40,40,40
 
 def lane_check_1(q1,fg1,order):
     global cars_lane_1,set_lane_1
     set_lane_1=set()
-    cap = cv2.VideoCapture(0)
-    t_end=time.time()+10
+    cap = cv2.VideoCapture('1038686156-preview.mp4')
+    t_end=time.time()+40
     queue_value=0
     while True:
         ret, frames = cap.read()                                    # reads frames from a video
         gray = cv2.cvtColor(frames, cv2.COLOR_BGR2GRAY)
-        cars = car_cascade.detectMultiScale(gray, 1.1, 1)
+        cars = car_cascade.detectMultiScale(gray, 1.01, 1)
         cars_lane_1=len(cars)
         set_lane_1.add(cars_lane_1)
 
@@ -38,13 +38,13 @@ def lane_check_1(q1,fg1,order):
 def lane_check_2(q2,fg2,order):
     global cars_lane_2, set_lane_2
     set_lane_2=set()
-    cap = cv2.VideoCapture('videos/jan28.avi')
-    t_end=time.time()+10
+    cap = cv2.VideoCapture('jan28.avi')
+    t_end=time.time()+40
     queue_value=0
     while True:
         ret, frames = cap.read()                                    # reads frames from a video
         gray = cv2.cvtColor(frames, cv2.COLOR_BGR2GRAY)
-        cars = car_cascade.detectMultiScale(gray, 1.1, 1)
+        cars = car_cascade.detectMultiScale(gray, 1.08,2 )
         cars_lane_2=len(cars)
         set_lane_2.add(cars_lane_2)
 
@@ -66,13 +66,13 @@ def lane_check_2(q2,fg2,order):
 def lane_check_3(q3,fg3,order):
     global cars_lane_3, set_lane_3
     set_lane_3=set()
-    cap = cv2.VideoCapture('videos/march9.avi')
-    t_end = time.time() + 10
+    cap = cv2.VideoCapture('march9.avi')
+    t_end = time.time() + 40
     queue_value=0
     while True:
         ret, frames = cap.read()                                    # reads frames from a video
         gray = cv2.cvtColor(frames, cv2.COLOR_BGR2GRAY)
-        cars = car_cascade.detectMultiScale(gray, 1.1, 1)
+        cars = car_cascade.detectMultiScale(gray, 1.2, 1)
         cars_lane_3=len(cars)
         set_lane_3.add(cars_lane_3)
 
@@ -94,13 +94,13 @@ def lane_check_3(q3,fg3,order):
 def lane_check_4(q4,fg4,order):
     global cars_lane_4,set_lane_4
     set_lane_4=set()
-    cap = cv2.VideoCapture('videos/april21.avi')
-    t_end = time.time() + 10
+    cap = cv2.VideoCapture('april21.avi')
+    t_end = time.time() + 40
     queue_value=0
     while True:
         ret, frames = cap.read()                                    # reads frames from a video
         gray = cv2.cvtColor(frames, cv2.COLOR_BGR2GRAY)
-        cars = car_cascade.detectMultiScale(gray, 1.1, 1)
+        cars = car_cascade.detectMultiScale(gray, 1.2, 1)
         cars_lane_4=len(cars)
         set_lane_4.add(cars_lane_4)
 
@@ -122,59 +122,59 @@ def lane_check_4(q4,fg4,order):
 
 def light_lane_1(initial_timer1=40):
     initial_timer_1= time.time()+initial_timer1
-    #GPIO.cleanup()
-    GPIO.setmode(GPIO.BOARD)
-    LED = 11
-    GPIO.setup(LED, GPIO.OUT)
-    while time.time()<initial_timer_1:
-        GPIO.output(LED,True)
-        time.sleep(1)
-    GPIO.cleanup()
+    # #GPIO.cleanup()
+    # GPIO.setmode(GPIO.BOARD)
+    # LED = 11
+    # GPIO.setup(LED, GPIO.OUT)
+    # while time.time()<initial_timer_1:
+    #     GPIO.output(LED,True)
+    #     time.sleep(1)
+    # GPIO.cleanup()
 
 def light_lane_2(initial_timer2=40):
     initial_timer_2 = time.time() + initial_timer2
-    GPIO.cleanup()
-    GPIO.setmode(GPIO.BOARD)
-    LED = 12
-    GPIO.setup(LED, GPIO.OUT)
-    while time.time() < initial_timer_2:
-        GPIO.output(LED, True)
-        time.sleep(1)
-    GPIO.cleanup()
+    # GPIO.cleanup()
+    # GPIO.setmode(GPIO.BOARD)
+    # LED = 12
+    # GPIO.setup(LED, GPIO.OUT)
+    # while time.time() < initial_timer_2:
+    #     GPIO.output(LED, True)
+    #     time.sleep(1)
+    # GPIO.cleanup()
 
 def light_lane_3(initial_timer3=40):
     initial_timer_3 = time.time() + initial_timer3
-    GPIO.cleanup()
-    GPIO.setmode(GPIO.BOARD)
-    LED = 13
-    GPIO.setup(LED, GPIO.OUT)
-    while time.time() < initial_timer_3:
-        GPIO.output(LED, True)
-        time.sleep(1)
-    GPIO.cleanup()
+    # GPIO.cleanup()
+    # GPIO.setmode(GPIO.BOARD)
+    # LED = 13
+    # GPIO.setup(LED, GPIO.OUT)
+    # while time.time() < initial_timer_3:
+    #     GPIO.output(LED, True)
+    #     time.sleep(1)
+    # GPIO.cleanup()
 
 def light_lane_4(initial_timer4=40):
     initial_timer_4 = time.time() + initial_timer4
-    GPIO.cleanup()
-    GPIO.setmode(GPIO.BOARD)
-    LED = 14
-    GPIO.setup(LED, GPIO.OUT)
-    while time.time() < initial_timer_4:
-        GPIO.output(LED, True)
-        time.sleep(1)
-    GPIO.cleanup()
+    # GPIO.cleanup()
+    # GPIO.setmode(GPIO.BOARD)
+    # LED = 14
+    # GPIO.setup(LED, GPIO.OUT)
+    # while time.time() < initial_timer_4:
+    #     GPIO.output(LED, True)
+    #     time.sleep(1)
+    # GPIO.cleanup()
 
 
 def red_light(initial_timer_r=40):
     initial_timer_red = time.time() + initial_timer_r
-    GPIO.cleanup()
-    GPIO.setmode(GPIO.BOARD)
-    LED = 15
-    GPIO.setup(LED, GPIO.OUT)
-    while time.time() < initial_timer_red:
-        GPIO.output(LED, True)
-        time.sleep(1)
-    GPIO.cleanup()
+    # GPIO.cleanup()
+    # GPIO.setmode(GPIO.BOARD)
+    # LED = 15
+    # GPIO.setup(LED, GPIO.OUT)
+    # while time.time() < initial_timer_red:
+    #     GPIO.output(LED, True)
+    #     time.sleep(1)
+    # GPIO.cleanup()
 
 
 
